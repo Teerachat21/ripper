@@ -1,0 +1,606 @@
+<!DOCTYPE html>
+<html lang="th">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Smart Shop - ระบบรายรับรายจ่าย</title>
+  <!-- Google Fonts: Kanit -->
+  <link href="https://fonts.googleapis.com/css2?family=Kanit:wght@300;400;500;600&display=swap" rel="stylesheet">
+  <!-- Font Awesome -->
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+  <style>
+    :root {
+      --primary: #4f46e5;
+      --primary-hover: #4338ca;
+      --success: #10b981;
+      --danger: #ef4444;
+      --warning: #f59e0b;
+      --bg: #f8fafc;
+      --card-bg: #ffffff;
+      --text-main: #1e293b;
+      --text-muted: #64748b;
+      --border: #e2e8f0;
+      --radius: 12px;
+      --shadow: 0 4px 6px -1px rgb(0 0 0 / 0.1), 0 2px 4px -2px rgb(0 0 0 / 0.1);
+    }
+
+    * {
+      box-sizing: border-box;
+      font-family: 'Kanit', sans-serif;
+    }
+
+    body {
+      background: var(--bg);
+      color: var(--text-main);
+      margin: 0;
+      padding: 0;
+      min-height: 100vh;
+    }
+
+    .container {
+      max-width: 1100px;
+      margin: 0 auto;
+      padding: 2rem 1rem;
+    }
+
+    /* Login Styles */
+    .login-wrapper {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      min-height: 100vh;
+      padding: 1rem;
+    }
+
+    .login-card {
+      background: var(--card-bg);
+      padding: 2.5rem;
+      border-radius: 20px;
+      box-shadow: 0 20px 25px -5px rgb(0 0 0 / 0.1);
+      width: 100%;
+      max-width: 400px;
+      text-align: center;
+    }
+
+    .login-card h1 {
+      margin-bottom: 0.5rem;
+      font-size: 1.875rem;
+      font-weight: 600;
+      color: var(--primary);
+    }
+
+    .login-card p {
+      color: var(--text-muted);
+      margin-bottom: 2rem;
+    }
+
+    .input-group {
+      margin-bottom: 1.25rem;
+      text-align: left;
+    }
+
+    .input-group label {
+      display: block;
+      font-size: 0.875rem;
+      font-weight: 500;
+      margin-bottom: 0.5rem;
+      color: var(--text-main);
+    }
+
+    .input-field {
+      width: 100%;
+      padding: 0.75rem 1rem;
+      border: 1px solid var(--border);
+      border-radius: var(--radius);
+      font-size: 1rem;
+      transition: all 0.2s;
+      outline: none;
+    }
+
+    .input-field:focus {
+      border-color: var(--primary);
+      box-shadow: 0 0 0 3px rgba(79, 70, 229, 0.1);
+    }
+
+    .btn {
+      width: 100%;
+      padding: 0.75rem 1.5rem;
+      border-radius: var(--radius);
+      font-weight: 500;
+      font-size: 1rem;
+      cursor: pointer;
+      transition: all 0.2s;
+      border: none;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      gap: 0.5rem;
+    }
+
+    .btn-primary {
+      background: var(--primary);
+      color: white;
+    }
+
+    .btn-primary:hover {
+      background: var(--primary-hover);
+      transform: translateY(-1px);
+    }
+
+    /* Dashboard Styles */
+    .header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 2rem;
+    }
+
+    .header h1 {
+      font-size: 1.5rem;
+      margin: 0;
+      display: flex;
+      align-items: center;
+      gap: 0.75rem;
+    }
+
+    .header h1 i {
+      color: var(--primary);
+    }
+
+    .btn-logout {
+      background: #f1f5f9;
+      color: var(--text-main);
+      padding: 0.5rem 1rem;
+      font-size: 0.875rem;
+    }
+
+    .btn-logout:hover {
+      background: #e2e8f0;
+    }
+
+    /* Grid Layout */
+    .dashboard-grid {
+      display: grid;
+      grid-template-columns: 1fr;
+      gap: 1.5rem;
+    }
+
+    @media (min-width: 1024px) {
+      .dashboard-grid {
+        grid-template-columns: 350px 1fr;
+      }
+    }
+
+    /* Card Component */
+    .card {
+      background: var(--card-bg);
+      border-radius: var(--radius);
+      padding: 1.5rem;
+      box-shadow: var(--shadow);
+      border: 1px solid var(--border);
+    }
+
+    .card-title {
+      font-size: 1.125rem;
+      font-weight: 600;
+      margin-bottom: 1.25rem;
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+    }
+
+    /* Summary Cards */
+    .summary-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+      gap: 1rem;
+      margin-bottom: 2rem;
+    }
+
+    .summary-card {
+      padding: 1.5rem;
+      border-radius: var(--radius);
+      color: white;
+      position: relative;
+      overflow: hidden;
+    }
+
+    .summary-card i {
+      position: absolute;
+      right: -10px;
+      bottom: -10px;
+      font-size: 4rem;
+      opacity: 0.2;
+    }
+
+    .summary-card .label {
+      font-size: 0.875rem;
+      font-weight: 300;
+      margin-bottom: 0.5rem;
+    }
+
+    .summary-card .value {
+      font-size: 1.75rem;
+      font-weight: 600;
+    }
+
+    .bg-income { background: linear-gradient(135deg, #10b981, #059669); }
+    .bg-expense { background: linear-gradient(135deg, #ef4444, #dc2626); }
+    .bg-balance { background: linear-gradient(135deg, #6366f1, #4f46e5); }
+
+    /* Form Styles */
+    .form-group {
+      display: flex;
+      flex-direction: column;
+      gap: 1rem;
+    }
+
+    /* Table Styles */
+    .table-container {
+      overflow-x: auto;
+      background: var(--card-bg);
+      border-radius: var(--radius);
+      border: 1px solid var(--border);
+    }
+
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      text-align: left;
+    }
+
+    th {
+      background: #f8fafc;
+      padding: 1rem;
+      font-size: 0.875rem;
+      font-weight: 600;
+      color: var(--text-muted);
+      border-bottom: 1px solid var(--border);
+    }
+
+    td {
+      padding: 1rem;
+      font-size: 0.9375rem;
+      border-bottom: 1px solid var(--border);
+    }
+
+    tr:last-child td {
+      border-bottom: none;
+    }
+
+    tr:hover td {
+      background: #f8fafc;
+    }
+
+    .badge {
+      padding: 0.25rem 0.625rem;
+      border-radius: 9999px;
+      font-size: 0.75rem;
+      font-weight: 500;
+    }
+
+    .badge-income { background: #d1fae5; color: #065f46; }
+    .badge-expense { background: #fee2e2; color: #991b1b; }
+
+    .btn-icon {
+      width: 32px;
+      height: 32px;
+      border-radius: 8px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      cursor: pointer;
+      border: none;
+      transition: all 0.2s;
+    }
+
+    .btn-delete {
+      background: #fee2e2;
+      color: #ef4444;
+    }
+
+    .btn-delete:hover {
+      background: #ef4444;
+      color: white;
+    }
+
+    /* Chart Area */
+    .chart-container {
+      margin-top: 1.5rem;
+      height: 300px;
+    }
+  </style>
+</head>
+<body>
+  <div id="app"></div>
+
+  <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+  <script>
+    const users = [
+      {
+        username: 'admin',
+        password: '1234'
+      }
+    ];
+
+    let currentUser = null;
+    let transactions = JSON.parse(localStorage.getItem('transactions')) || [];
+    let chart;
+
+    function loginPage() {
+      document.getElementById('app').innerHTML = `
+        <div class="login-wrapper">
+          <div class="login-card">
+            <h1><i class="fas fa-store"></i> Smart Shop</h1>
+            <p>กรุณาเข้าสู่ระบบเพื่อจัดการร้านค้า</p>
+            
+            <div class="input-group">
+              <label>ชื่อผู้ใช้</label>
+              <input type="text" id="username" class="input-field" placeholder="กรอกชื่อผู้ใช้">
+            </div>
+            
+            <div class="input-group">
+              <label>รหัสผ่าน</label>
+              <input type="password" id="password" class="input-field" placeholder="กรอกรหัสผ่าน">
+            </div>
+            
+            <button class="btn btn-primary" onclick="login()">
+              เข้าสู่ระบบ <i class="fas fa-sign-in-alt"></i>
+            </button>
+          </div>
+        </div>
+      `;
+    }
+
+    function login() {
+      const username = document.getElementById('username').value;
+      const password = document.getElementById('password').value;
+
+      const user = users.find(u => u.username === username && u.password === password);
+
+      if(user) {
+        currentUser = user;
+        dashboardPage();
+      } else {
+        alert('ชื่อผู้ใช้หรือรหัสผ่านไม่ถูกต้อง');
+      }
+    }
+
+    function dashboardPage() {
+      document.getElementById('app').innerHTML = `
+        <div class="container">
+          <div class="header">
+            <h1><i class="fas fa-chart-line"></i> ระบบจัดการรายรับ-รายจ่าย</h1>
+            <button class="btn btn-logout" onclick="logout()">
+              <i class="fas fa-sign-out-alt"></i> ออกจากระบบ
+            </button>
+          </div>
+
+          <div class="summary-grid">
+            <div class="summary-card bg-income">
+              <i class="fas fa-arrow-up"></i>
+              <div class="label">รายรับทั้งหมด</div>
+              <div class="value" id="total-income">0</div>
+            </div>
+            <div class="summary-card bg-expense">
+              <i class="fas fa-arrow-down"></i>
+              <div class="label">รายจ่ายทั้งหมด</div>
+              <div class="value" id="total-expense">0</div>
+            </div>
+            <div class="summary-card bg-balance">
+              <i class="fas fa-wallet"></i>
+              <div class="label">ยอดคงเหลือสุทธิ</div>
+              <div class="value" id="balance">0</div>
+            </div>
+          </div>
+
+          <div class="dashboard-grid">
+            <!-- Form Side -->
+            <div class="card">
+              <div class="card-title"><i class="fas fa-plus-circle"></i> เพิ่มรายการใหม่</div>
+              <div class="form-group">
+                <div class="input-group">
+                  <label>วันที่</label>
+                  <input type="date" id="date" class="input-field" />
+                </div>
+                <div class="input-group">
+                  <label>รายละเอียด</label>
+                  <input type="text" id="detail" class="input-field" placeholder="เช่น ขายของ, ค่าน้ำไฟ" />
+                </div>
+                <div class="input-group">
+                  <label>ประเภท</label>
+                  <select id="type" class="input-field">
+                    <option value="income">รายรับ (+)</option>
+                    <option value="expense">รายจ่าย (-)</option>
+                  </select>
+                </div>
+                <div class="input-group">
+                  <label>จำนวนเงิน (บาท)</label>
+                  <input type="number" id="amount" class="input-field" placeholder="0.00" />
+                </div>
+                <button class="btn btn-primary" onclick="addTransaction()">
+                  <i class="fas fa-save"></i> บันทึกรายการ
+                </button>
+              </div>
+
+              <div style="margin-top: 2rem;">
+                <div class="card-title"><i class="fas fa-chart-pie"></i> สรุปรายจ่าย</div>
+                <div class="chart-container">
+                  <canvas id="financeChart"></canvas>
+                </div>
+              </div>
+            </div>
+
+            <!-- List Side -->
+            <div class="card">
+              <div class="card-title"><i class="fas fa-list"></i> ประวัติรายการ</div>
+              <div class="table-container">
+                <table>
+                  <thead>
+                    <tr>
+                      <th>วันที่</th>
+                      <th>รายละเอียด</th>
+                      <th>ประเภท</th>
+                      <th style="text-align: right;">จำนวนเงิน</th>
+                      <th style="text-align: center;">จัดการ</th>
+                    </tr>
+                  </thead>
+                  <tbody id="transaction-list"></tbody>
+                </table>
+              </div>
+            </div>
+          </div>
+        </div>
+      `;
+
+      // Set default date to today
+      const today = new Date().toISOString().split('T')[0];
+      document.getElementById('date').value = today;
+
+      renderTransactions();
+      renderChart();
+    }
+
+    function logout() {
+      currentUser = null;
+      loginPage();
+    }
+
+    function saveData() {
+      localStorage.setItem('transactions', JSON.stringify(transactions));
+    }
+
+    function addTransaction() {
+      const date = document.getElementById('date').value;
+      const detail = document.getElementById('detail').value;
+      const type = document.getElementById('type').value;
+      const amount = parseFloat(document.getElementById('amount').value);
+
+      if (!date || !detail || isNaN(amount) || amount <= 0) {
+        alert('กรุณากรอกข้อมูลให้ครบถ้วนและถูกต้อง');
+        return;
+      }
+
+      transactions.push({ date, detail, type, amount });
+
+      saveData();
+      renderTransactions();
+      renderChart();
+
+      document.getElementById('detail').value = '';
+      document.getElementById('amount').value = '';
+    }
+
+    function deleteTransaction(index) {
+      if(confirm('คุณแน่ใจหรือไม่ว่าต้องการลบรายการนี้?')) {
+        transactions.splice(index, 1);
+        saveData();
+        renderTransactions();
+        renderChart();
+      }
+    }
+
+    function renderTransactions() {
+      const list = document.getElementById('transaction-list');
+      if(!list) return;
+
+      list.innerHTML = '';
+
+      let income = 0;
+      let expense = 0;
+
+      // Sort transactions by date (descending)
+      const sortedTransactions = [...transactions].sort((a, b) => new Date(b.date) - new Date(a.date));
+
+      sortedTransactions.forEach((item) => {
+        const originalIndex = transactions.indexOf(item);
+        
+        if (item.type === 'income') {
+          income += item.amount;
+        } else {
+          expense += item.amount;
+        }
+
+        list.innerHTML += `
+          <tr>
+            <td style="white-space: nowrap;">${item.date}</td>
+            <td style="font-weight: 500;">${item.detail}</td>
+            <td>
+              <span class="badge ${item.type === 'income' ? 'badge-income' : 'badge-expense'}">
+                ${item.type === 'income' ? 'รายรับ' : 'รายจ่าย'}
+              </span>
+            </td>
+            <td style="text-align: right; font-weight: 600; color: ${item.type === 'income' ? '#059669' : '#dc2626'}">
+              ${item.amount.toLocaleString(undefined, {minimumFractionDigits: 2})}
+            </td>
+            <td>
+              <div style="display: flex; justify-content: center;">
+                <button class="btn-icon btn-delete" onclick="deleteTransaction(${originalIndex})" title="ลบรายการ">
+                  <i class="fas fa-trash-alt"></i>
+                </button>
+              </div>
+            </td>
+          </tr>
+        `;
+      });
+
+      document.getElementById('total-income').innerText = income.toLocaleString(undefined, {minimumFractionDigits: 2}) + ' ฿';
+      document.getElementById('total-expense').innerText = expense.toLocaleString(undefined, {minimumFractionDigits: 2}) + ' ฿';
+      document.getElementById('balance').innerText = (income - expense).toLocaleString(undefined, {minimumFractionDigits: 2}) + ' ฿';
+    }
+
+    function renderChart() {
+      const ctx = document.getElementById('financeChart');
+      if(!ctx) return;
+
+      let income = 0;
+      let expense = 0;
+
+      transactions.forEach(item => {
+        if(item.type === 'income') {
+          income += item.amount;
+        } else {
+          expense += item.amount;
+        }
+      });
+
+      if(chart) {
+        chart.destroy();
+      }
+
+      chart = new Chart(ctx, {
+        type: 'doughnut',
+        data: {
+          labels: ['รายรับ', 'รายจ่าย'],
+          datasets: [{
+            data: [income, expense],
+            backgroundColor: ['#10b981', '#ef4444'],
+            borderWidth: 0,
+            hoverOffset: 10
+          }]
+        },
+        options: {
+          responsive: true,
+          maintainAspectRatio: false,
+          plugins: {
+            legend: {
+              position: 'bottom',
+              labels: {
+                padding: 20,
+                usePointStyle: true,
+                font: {
+                  family: 'Kanit',
+                  size: 12
+                }
+              }
+            }
+          },
+          cutout: '70%'
+        }
+      });
+    }
+
+    loginPage();
+  </script>
+</body>
+</html>
